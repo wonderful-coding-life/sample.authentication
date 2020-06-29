@@ -30,6 +30,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 import static android.Manifest.permission.CAMERA;
 
 public class EditUserProfileActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener, View.OnClickListener {
@@ -130,6 +139,7 @@ public class EditUserProfileActivity extends AppCompatActivity implements Fireba
             switch (requestCode) {
                 case REQUEST_CODE_CAMER_FOR_PROFILE:
                     Glide.with(this).load(photoFile).apply(RequestOptions.circleCropTransform()).into(binding.photo);
+                    uploadPhoto();
                     break;
             }
         }
@@ -144,5 +154,29 @@ public class EditUserProfileActivity extends AppCompatActivity implements Fireba
                 }
                 break;
         }
+    }
+
+    private void uploadPhoto() {
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.imgbb.com").addConverterFactory(GsonConverterFactory.create()).build();
+        ImgbbApi imgbbApi = retrofit.create(ImgbbApi.class);
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpg"), photoFile);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", photoFile.getName(), requestFile);
+        imgbbApi.uploadImages("df4638592de1f3237b55d9a6397f9607", body, null).enqueue(new Callback<ImgbbResult>() {
+            @Override
+            public void onResponse(Call<ImgbbResult> call, Response<ImgbbResult> response) {
+                if (response.code() == 200) {
+                    ImgbbResult imgbbResult = response.body();
+                    Log.i(TAG, "uploaded photo " + imgbbResult.success + ", " + imgbbResult.status + ", " + imgbbResult.data.url);
+                } else {
+                    Log.e(TAG, "unable to upload photo due to http " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ImgbbResult> call, Throwable t) {
+                Log.e(TAG, "unable to upload photo due to " + t.getLocalizedMessage());
+            }
+        });
     }
 }
