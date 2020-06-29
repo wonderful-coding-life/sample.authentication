@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -58,7 +59,11 @@ public class MainActivity extends AppCompatActivity implements FirebaseAuth.Auth
             binding.displayName.setText("이름: " + user.getDisplayName());
             binding.email.setText("메일: " + user.getEmail());
             binding.phone.setText("전화번호: " + user.getPhoneNumber());
-            Glide.with(this).load(user.getPhotoUrl()).apply(RequestOptions.circleCropTransform()).into(binding.photo);
+            if (user.getPhotoUrl() == null) {
+                binding.photo.setImageResource(R.drawable.ic_baseline_account_circle_24);
+            } else {
+                Glide.with(this).load(user.getPhotoUrl()).apply(RequestOptions.circleCropTransform()).into(binding.photo);
+            }
         } else {
             binding.displayName.setText("이름: ");
             binding.email.setText("메일: ");
