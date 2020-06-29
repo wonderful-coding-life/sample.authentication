@@ -113,7 +113,6 @@ public class EditUserProfileActivity extends AppCompatActivity implements Fireba
                     photoFile = File.createTempFile("picture_" + timeStamp, ".jpg", storageDir);
                     Uri photoURI = FileProvider.getUriForFile(this, "com.sample.authentication.provider", photoFile);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     startActivityForResult(intent, REQUEST_CODE_CAMER_FOR_PROFILE);
                 } catch (IOException e) {
                     e.printStackTrace();
