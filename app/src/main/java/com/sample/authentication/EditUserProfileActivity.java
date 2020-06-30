@@ -135,14 +135,6 @@ public class EditUserProfileActivity extends AppCompatActivity implements View.O
         }
     }
 
-    private void saveUserProfile() {
-        if (photoFile != null) {
-            uploadPhoto();
-        } else {
-            updateFirebase();
-        }
-    }
-
     private void updateFirebase() {
         UserProfileChangeRequest.Builder builder = new UserProfileChangeRequest.Builder();
         String newName = binding.name.getText().toString();
